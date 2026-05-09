@@ -22,24 +22,7 @@ CampusBite is a beginner-friendly full-stack web application designed to reduce 
 * **Database & ORM:** MySQL, Spring Data JPA (Hibernate).
 * **Build Tool:** Maven.
 
-## 4. Project Structure
-```
-CampusBite/
-├── .gitignore
-├── pom.xml
-├── README.md
-└── src/
-    └── main/
-        ├── java/com/campusbite/
-        │   ├── config/       (Security and Database Initialization)
-        │   ├── controller/   (REST API Endpoints)
-        │   ├── dto/          (Data Transfer Objects)
-        │   ├── entity/       (Database Models)
-        │   ├── repository/   (JPA Interfaces)
-        │   └── service/      (Business Logic)
-        └── resources/
-            ├── application.properties
-            └── static/       (Frontend HTML, CSS, JS, Images)
+
 ```
 
 ## 5. How to Run
