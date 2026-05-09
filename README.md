@@ -23,7 +23,13 @@ CampusBite is a beginner-friendly full-stack web application designed to reduce 
 * **Build Tool:** Maven.
 
 
-```
+## 4.How to Run the Project
+
+1. Clone or download the repository.
+2. Open the project in IntelliJ IDEA, Eclipse, or VS Code.
+3. Ensure Maven dependencies are downloaded and synced properly.
+4. Run the `CampusBiteApplication.java` main class.
+5. Open your browser and navigate to: `http://localhost:8080`
 
 > **Note on Frontend Preview:** If you want to preview the UI without starting the Java server (e.g., using VS Code Live Server), the frontend will automatically fallback to static hardcoded JavaScript data so you can still view the menu cards and cart functionality!
 
