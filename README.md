@@ -33,6 +33,17 @@ CampusBite is a beginner-friendly full-stack web application designed to reduce 
 
 > **Note on Frontend Preview:** If you want to preview the UI without starting the Java server (e.g., using VS Code Live Server), the frontend will automatically fallback to static hardcoded JavaScript data so you can still view the menu cards and cart functionality!
 
+## Database Setup
+
+1. Install MySQL Server.
+2. Create the database:
+   ```sql
+   CREATE DATABASE campus_bite;
+3.Update the MySQL username and password inside application.properties.
+4.Ensure MySQL server is running before starting the application.
+5.Run the Spring Boot application normally.
+
+
 ## 4. Admin Login Details
 Upon the first run, the application automatically generates a default admin account.
 * **Username:** `admin`
