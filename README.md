@@ -25,26 +25,10 @@ CampusBite is a beginner-friendly full-stack web application designed to reduce 
 
 ```
 
-## 5. How to Run
-1. **Setup Database:** Open your MySQL client and create a new database:
-   ```sql
-   CREATE DATABASE campusbite;
-   ```
-2. **Configure Database:** Open `src/main/resources/application.properties` and update `your_username` and `your_password` to match your local MySQL credentials.
-3. **Run the App:** 
-   - Open the project in your IDE (IntelliJ IDEA, Eclipse, or VS Code).
-   - Run the `CampusBiteApplication.java` main class.
-   - Alternatively, you can run the Maven command `mvn spring-boot:run` if Maven is installed in your terminal.
-4. **Access the Application:** Open your browser and navigate to `http://localhost:8080/`.
-
 > **Note on Frontend Preview:** If you want to preview the UI without starting the Java server (e.g., using VS Code Live Server), the frontend will automatically fallback to static hardcoded JavaScript data so you can still view the menu cards and cart functionality!
 
-## 6. Admin Login Details
+## 4. Admin Login Details
 Upon the first run, the application automatically generates a default admin account.
 * **Username:** `admin`
 * **Password:** `admin123`
 
-## 7. Future Improvements
-* Adding a payment gateway integration (like Razorpay) to process payments during pre-order.
-* Implementing email/SMS notifications when an order is marked as ready.
-* Adding a historical reports page for canteen staff to analyze weekly sales data.
