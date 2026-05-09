@@ -36,13 +36,18 @@ CampusBite is a beginner-friendly full-stack web application designed to reduce 
 ## Database Setup
 
 1. Install MySQL Server.
+
 2. Create the database:
+
    ```sql
    CREATE DATABASE campus_bite;
-3.Update the MySQL username and password inside application.properties.
-4.Ensure MySQL server is running before starting the application.
+   ```
 
-5.Run the Spring Boot application normally.
+3. Update the MySQL username and password inside `application.properties`.
+
+4. Ensure MySQL server is running before starting the application.
+
+5. Run the Spring Boot application normally.
 
 
 ## 4. Admin Login Details
