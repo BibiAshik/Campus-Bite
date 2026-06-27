@@ -11,12 +11,14 @@ CampusBite provides a seamless experience for students to browse menus, add item
 ### Admin Dashboard
 <div align="center">
   <img width="48%" alt="Admin Page" src="https://github.com/user-attachments/assets/251aab71-60da-4c6e-b9bd-a076bf8dcfd6" />
+    &nbsp; &nbsp; &nbsp;
   <img width="48%" alt="Admin Page" src="https://github.com/user-attachments/assets/e66b8c14-8507-4fb1-b38b-38e4676ea663" />
 </div>
 <br>
-
+  &nbsp; &nbsp; &nbsp;
 <div align="center">
   <img width="48%" alt="Admin Orders" src="https://github.com/user-attachments/assets/0eb6cb9a-b4f1-474f-a24d-1c4b3871ad00" />
+    &nbsp; &nbsp; &nbsp;
   <img width="48%" alt="Admin Menu Management" src="https://github.com/user-attachments/assets/7d90755b-48cf-4f3e-af1d-ff0b01a9d223" />
 </div>
 <br>
