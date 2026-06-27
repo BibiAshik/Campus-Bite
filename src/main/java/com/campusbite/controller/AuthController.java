@@ -1,23 +1,44 @@
 package com.campusbite.controller;
 
+import com.campusbite.dto.request.AdminLoginRequestDTO;
+import com.campusbite.dto.response.AuthResponseDTO;
+import com.campusbite.security.JwtUtil;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    @GetMapping("/status")
-    public ResponseEntity<?> checkAuthStatus() {
-        // If the user reaches this point, they are authenticated (due to Spring Security rules)
-        // Note: For this to work cleanly for the frontend to just check if admin is logged in,
-        // we might want to configure Spring Security to allow /api/auth/status and return a different response
-        // if not logged in. But since we use formLogin, it might redirect.
-        // For simplicity, we just return true.
-        return ResponseEntity.ok(Map.of("authenticated", true));
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
+
+    public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
+        this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
+    }
+
+    @PostMapping("/admin/login")
+    public ResponseEntity<AuthResponseDTO> adminLogin(@Valid @RequestBody AdminLoginRequestDTO loginRequest) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getUsername(),
+                        loginRequest.getPassword()
+                )
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String jwt = jwtUtil.generateToken(authentication.getName(), "ROLE_ADMIN");
+
+        return ResponseEntity.ok(new AuthResponseDTO(jwt, "ROLE_ADMIN", authentication.getName()));
     }
 }
