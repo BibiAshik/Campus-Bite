@@ -20,4 +20,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByStudentEmailAndOrderDateBetweenOrderByOrderDateDesc(String studentEmail, LocalDateTime startDate, LocalDateTime endDate);
     List<Order> findByStudentEmailAndStatusAndOrderDateBetweenOrderByOrderDateDesc(String studentEmail, String status, LocalDateTime startDate, LocalDateTime endDate);
     List<Order> findByStudentEmailAndStatusOrderByOrderDateDesc(String studentEmail, String status);
+    Optional<Order> findByRazorpayOrderId(String razorpayOrderId);
 }

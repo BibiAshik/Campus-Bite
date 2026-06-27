@@ -126,9 +126,7 @@ public class PaymentService {
      */
     @Transactional
     public PaymentResponseDTO verifyAndCompletePayment(String razorpayOrderId, String razorpayPaymentId, String razorpaySignature, String studentEmail) {
-        Order order = orderRepository.findAll().stream()
-                .filter(o -> razorpayOrderId.equals(o.getRazorpayOrderId()))
-                .findFirst()
+        Order order = orderRepository.findByRazorpayOrderId(razorpayOrderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with razorpayOrderId"));
 
         if (!order.getStudentEmail().equals(studentEmail)) {
@@ -151,9 +149,7 @@ public class PaymentService {
             order.setRazorpayPaymentId(razorpayPaymentId);
             orderRepository.save(order);
 
-            Payment payment = paymentRepository.findAll().stream()
-                    .filter(p -> razorpayOrderId.equals(p.getRazorpayOrderId()))
-                    .findFirst()
+            Payment payment = paymentRepository.findByRazorpayOrderId(razorpayOrderId)
                     .orElseThrow(() -> new ResourceNotFoundException("Payment record not found"));
 
             payment.setRazorpayPaymentId(razorpayPaymentId);
