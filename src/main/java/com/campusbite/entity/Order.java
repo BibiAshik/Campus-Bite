@@ -30,7 +30,7 @@ public class Order {
     private String rollNumber;
 
     @Column(nullable = false)
-    private String status; // PENDING, READY, PICKED_UP
+    private String status; // PENDING, FOOD_READY, SERVED
 
     @Column(nullable = false)
     private Double totalAmount;
@@ -41,4 +41,14 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> items = new ArrayList<>();
+
+    @Column(nullable = false)
+    private String studentEmail;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
+
+    private String razorpayOrderId;
+
+    private String razorpayPaymentId;
 }

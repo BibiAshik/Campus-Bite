@@ -14,4 +14,10 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByStatusOrderByOrderDateDesc(String status);
     List<Order> findByOrderDateAfter(LocalDateTime date);
     List<Order> findAllByOrderByOrderDateDesc();
+    List<Order> findByStudentEmailOrderByOrderDateDesc(String studentEmail);
+    List<Order> findByOrderDateBetweenOrderByOrderDateDesc(LocalDateTime startDate, LocalDateTime endDate);
+    List<Order> findByStatusAndOrderDateBetweenOrderByOrderDateDesc(String status, LocalDateTime startDate, LocalDateTime endDate);
+    List<Order> findByStudentEmailAndOrderDateBetweenOrderByOrderDateDesc(String studentEmail, LocalDateTime startDate, LocalDateTime endDate);
+    List<Order> findByStudentEmailAndStatusAndOrderDateBetweenOrderByOrderDateDesc(String studentEmail, String status, LocalDateTime startDate, LocalDateTime endDate);
+    List<Order> findByStudentEmailAndStatusOrderByOrderDateDesc(String studentEmail, String status);
 }
