@@ -8,23 +8,26 @@ CampusBite provides a seamless experience for students to browse menus, add item
 
 ## 📸 Screenshots
 
-<br><br>
-<img width="1600" height="899" alt="image" src="https://github.com/user-attachments/assets/251aab71-60da-4c6e-b9bd-a076bf8dcfd6" />
-<img width="1600" height="899" alt="image" src="https://github.com/user-attachments/assets/7315e3e5-8755-4c1e-a1a5-504c37ea1979" />
+### Student Portal
+<div align="center">
+  <img width="48%" alt="Student Dashboard" src="https://github.com/user-attachments/assets/251aab71-60da-4c6e-b9bd-a076bf8dcfd6" />
+  <img width="48%" alt="Student Menu" src="https://github.com/user-attachments/assets/7315e3e5-8755-4c1e-a1a5-504c37ea1979" />
+</div>
+<br>
 
-<br><br>
+### Admin Dashboard
+<div align="center">
+  <img width="48%" alt="Admin Orders" src="https://github.com/user-attachments/assets/0eb6cb9a-b4f1-474f-a24d-1c4b3871ad00" />
+  <img width="48%" alt="Admin Menu Management" src="https://github.com/user-attachments/assets/7d90755b-48cf-4f3e-af1d-ff0b01a9d223" />
+</div>
+<br>
 
-<br><br>
-<img width="1600" height="899" alt="image" src="https://github.com/user-attachments/assets/0eb6cb9a-b4f1-474f-a24d-1c4b3871ad00" />
-<img width="1600" height="899" alt="image" src="https://github.com/user-attachments/assets/7d90755b-48cf-4f3e-af1d-ff0b01a9d223" />
-
-<br><br>
-
-<br><br>
-<img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/a1ce0354-3ed2-441f-9cf3-a9bba05deff7" />
-<img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/cd49acf2-368a-4dfb-9c5b-a1b14298f5ba" />
-
-<br><br>
+### Mobile Responsive Design
+<div align="center">
+  <img width="25%" alt="Mobile View 1" src="https://github.com/user-attachments/assets/a1ce0354-3ed2-441f-9cf3-a9bba05deff7" />
+  &nbsp; &nbsp; &nbsp;
+  <img width="25%" alt="Mobile View 2" src="https://github.com/user-attachments/assets/cd49acf2-368a-4dfb-9c5b-a1b14298f5ba" />
+</div>
 
 ---
 
