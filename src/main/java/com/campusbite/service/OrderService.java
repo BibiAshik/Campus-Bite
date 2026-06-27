@@ -131,8 +131,8 @@ public class OrderService {
         order.setPaymentStatus(PaymentStatus.PENDING);
         order.setOrderDate(LocalDateTime.now());
         
-        // Generate a simple token number like A-047
-        String token = "A-" + String.format("%03d", (int)(Math.random() * 1000));
+        // Generate a unique token number
+        String token = "TKN-" + java.util.UUID.randomUUID().toString().substring(0, 6).toUpperCase();
         order.setTokenNumber(token);
 
         double totalAmount = 0.0;
