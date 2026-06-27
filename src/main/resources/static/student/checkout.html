@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - CampusBite</title>
+    <link rel="icon" type="image/png" href="/images/favicon.png">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Common Navbar -->
+    <div class="nav-overlay" onclick="toggleNav()"></div>
+    <nav class="navbar">
+        <button class="nav-toggle-btn" onclick="toggleNav()"><i class="fa-solid fa-bars"></i></button>
+        <a href="/student/menu" class="nav-brand" style="display: flex; align-items: center;">
+            <img src="/images/logo.png" alt="CampusBite Logo" style="height: 65px;">
+        </a>
+        <div class="nav-links">
+            <div class="sidebar-logo">
+                <img src="/images/logo.png" alt="CampusBite Logo" style="height: 50px;">
+                <button onclick="toggleNav()" style="background: transparent; border: none; font-size: 1.5rem; color: var(--text-main); cursor: pointer;"><i class="fa-solid fa-bars"></i></button>
+            </div>
+            <a href="/student/menu"><i class="fa-solid fa-utensils"></i> Menu</a>
+
+            <a href="/student/my-orders"><i class="fa-solid fa-clipboard-list"></i> My Orders</a>
+            <a href="/student/my-payments"><i class="fa-solid fa-wallet"></i> My Payments</a>
+            <a href="/student/profile" class="mobile-nav-item"><i class="fa-regular fa-user"></i> Profile</a>
+        </div>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <a href="/student/cart" class="nav-cart" id="navCartLink">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span class="badge" id="navCartCount">0</span>
+            </a>
+            <a href="/student/profile" style="text-decoration: none;">
+                <div class="nav-profile">
+                    <img src="https://ui-avatars.com/api/?name=Student&background=random" id="navProfilePic" alt="Profile">
+                    <span class="nav-profile-name" id="navProfileName">Hi, Student 👋</span>
+                </div>
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-layout">
+            <!-- Left Side: Checkout Details -->
+            <div class="main-content">
+                <div class="menu-header" style="justify-content: flex-start; gap: 15px;">
+                    <i class="fa-regular fa-credit-card" style="font-size: 2rem; color: var(--text-main);"></i>
+                    <div>
+                        <h1 style="font-size: 2rem; margin-bottom: 0.2rem;">Checkout</h1>
+                        <p style="color: var(--text-muted);">Complete your payment to place the order.</p>
+                    </div>
+                </div>
+
+                <div class="checkout-section">
+                    <h3><i class="fa-regular fa-clock" style="color: var(--warning);"></i> 1. Pickup Time</h3>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <label style="font-weight: 500; color: var(--text-main);">Select preferred pickup time:</label>
+                        <select id="checkoutPickupTime" class="form-control" style="max-width: 400px; background: white;">
+                            <option value="">Select Time</option>
+                            <option value="12:30">Today, 12:30 PM - 12:45 PM</option>
+                            <option value="13:00">Today, 01:00 PM - 01:15 PM</option>
+                            <option value="13:30">Today, 01:30 PM - 01:45 PM</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="checkout-section">
+                    <h3><i class="fa-solid fa-list-check" style="color: var(--info);"></i> 2. Order Review</h3>
+                    <div id="checkoutItemsList" style="display: flex; flex-direction: column; gap: 1rem;">
+                        <!-- Items injected here -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Sidebar: Order Summary -->
+            <div class="cart-sidebar">
+                <h3 style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-receipt" style="color: var(--primary);"></i> 
+                    Order Summary
+                </h3>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <div class="summary-row">
+                        <span>Subtotal (<span id="summaryCount">0</span> items)</span>
+                        <span id="cartSubtotal">₹0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>GST (5%)</span>
+                        <span id="cartGst">₹0.00</span>
+                    </div>
+                    
+                    <div class="summary-total" style="background: #fff7ed; padding: 1rem; border-radius: 8px; border: 1px solid #ffedd5; margin-top: 0; align-items: center;">
+                        <span style="font-size: 1.1rem;">Amount Payable</span>
+                        <span id="cartTotal" style="color: var(--primary); font-size: 1.5rem;">₹0.00</span>
+                    </div>
+                </div>
+
+                <button id="btnPayNow" class="btn btn-primary" style="width: 100%; justify-content: center; font-size: 1.1rem; padding: 1rem;">
+                    Pay & Place Order <i class="fa-solid fa-lock"></i>
+                </button>
+                <p style="text-align: center; color: var(--text-muted); font-size: 0.75rem; margin-top: 10px;">By placing this order you agree to our Terms & Conditions.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Success Modal -->
+    <div id="orderSuccessModal" class="modal">
+        <div class="modal-content" style="max-width: 400px; text-align: center; padding: 3rem 2rem;">
+            <div style="width: 80px; height: 80px; border-radius: 50%; background: var(--success-bg); color: var(--success); font-size: 2.5rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto;">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h2 style="font-family: 'Space Grotesk', sans-serif; margin-bottom: 0.5rem; color: var(--text-main);">Order Placed!</h2>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Your payment was successful and your order has been placed.</p>
+            <div style="background: #f9fafb; padding: 1rem; border-radius: 8px; margin-bottom: 2rem; border: 1px dashed var(--border-color);">
+                <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Order ID</div>
+                <div id="successOrderId" style="font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--primary);">#CB000</div>
+            </div>
+            <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="window.location.href='/student/my-orders.html'">Go to My Orders</button>
+        </div>
+    </div>
+
+    <!-- Reusable Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
+    <script src="/js/student.js"></script>
+</body>
+</html>
+

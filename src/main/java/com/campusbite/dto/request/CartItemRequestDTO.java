@@ -1,9 +1,9 @@
-package com.campusbite.dto;
+package com.campusbite.dto.request;
 
 import lombok.Data;
 
 @Data
-public class OrderItemRequest {
+public class CartItemRequestDTO {
     private Long foodItemId;
     private Integer quantity;
 }

@@ -1,0 +1,118 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Menu Item - CampusBite</title>
+    <link rel="icon" type="image/png" href="/images/favicon.png">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/admin-layout.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    
+    <!-- Common Navbar -->
+    <div class="nav-overlay" onclick="toggleNav()"></div>
+    <nav class="navbar">
+        <button class="nav-toggle-btn" onclick="toggleNav()"><i class="fa-solid fa-bars"></i></button>
+        <a href="/admin/dashboard.html" class="nav-brand" style="display: flex; align-items: center;">
+            <img src="/images/logo.png" alt="CampusBite Logo" style="height: 65px;">
+        </a>
+        <div class="nav-links">
+            <div class="sidebar-logo">
+                <img src="/images/logo.png" alt="CampusBite Logo" style="height: 50px;">
+                <button onclick="toggleNav()" style="background: transparent; border: none; font-size: 1.5rem; color: var(--text-main); cursor: pointer;"><i class="fa-solid fa-bars"></i></button>
+            </div>
+            <a href="/admin/dashboard.html"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+            <a href="/admin/menu-management.html" class="active"><i class="fa-solid fa-burger"></i> Menu Management</a>
+            <a href="/admin/orders.html"><i class="fa-solid fa-receipt"></i> Orders</a>
+            <a href="/admin/payments.html"><i class="fa-solid fa-wallet"></i> Payments</a>
+            <a href="#" onclick="handleLogout()" class="mobile-nav-item"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+        </div>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <div class="nav-profile">
+                <img src="https://ui-avatars.com/api/?name=Admin&background=random" alt="Admin">
+                <span class="nav-profile-name">Admin Portal</span>
+            </div>
+            <button class="btn btn-outline" style="border-color: var(--danger); color: var(--danger); padding: 0.5rem 1rem;" onclick="handleLogout()">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+            </button>
+        </div>
+    </nav>
+
+    <div class="container" style="padding-top: 2rem;">
+        <h2 class="admin-page-title" style="margin-bottom: 0.5rem;">Update Menu Item</h2>
+                <div style="margin-bottom: 2rem;">
+                    <p style="color: var(--text-muted); margin: 0;">Modify the details of an existing food item.</p>
+                </div>
+
+            <div class="admin-card">
+                <form id="updateFoodForm">
+                    <div class="form-grid">
+                        <div>
+                            <div class="form-group">
+                                <label for="name">Item Name</label>
+                                <input type="text" id="name" name="name" class="form-control" placeholder="e.g. Masala Dosa" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <textarea id="description" name="description" class="form-control" rows="4" placeholder="Brief description of the item" required></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="category">Category</label>
+                                <select id="category" name="category" class="form-control" required>
+                                    <option value="">Select Category</option>
+                                    <option value="Breakfast">Breakfast</option>
+                                    <option value="Lunch">Lunch</option>
+                                    <option value="Snacks">Snacks</option>
+                                    <option value="Beverages">Beverages</option>
+                                </select>
+                            </div>
+                            
+                        </div>
+                        
+                        <div>
+                            <div class="form-group">
+                                <label for="price">Price (â‚¹)</label>
+                                <input type="number" id="price" name="price" class="form-control" placeholder="0.00" min="0" step="0.01" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="status">Status</label>
+                                <select id="status" name="status" class="form-control" required>
+                                    <option value="Active">Active (In Stock)</option>
+                                    <option value="Inactive">Inactive (Out of Stock)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Item Image</label>
+                                <div class="image-upload-box" onclick="document.getElementById('imageFile').click()">
+                                    <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem; color: var(--primary); margin-bottom: 10px;"></i>
+                                    <p style="margin:0; font-weight: 500;">Click to upload image</p>
+                                    <p style="margin:5px 0 0; font-size:0.8rem; color:var(--text-muted);">JPG, PNG up to 2MB</p>
+                                    <input type="file" id="imageFile" name="image" style="display:none;" accept="image/*" onchange="previewImage(this)">
+                                </div>
+                                <img id="imagePreview" class="image-preview">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 15px; margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                        <button type="submit" class="btn btn-primary" style="padding: 0.8rem 2rem;">Save Item</button>
+                        <a href="/admin/menu-management.html" class="btn btn-outline" style="padding: 0.8rem 2rem;">Cancel</a>
+                    </div>
+                </form>
+            </div>
+            
+    </div>
+
+    <script src="/js/admin.js"></script>
+</body>
+</html>
+

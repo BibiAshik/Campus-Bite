@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Payments - CampusBite</title>
+    <link rel="icon" type="image/png" href="/images/favicon.png">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Common Navbar -->
+    <div class="nav-overlay" onclick="toggleNav()"></div>
+    <nav class="navbar">
+        <button class="nav-toggle-btn" onclick="toggleNav()"><i class="fa-solid fa-bars"></i></button>
+        <a href="/student/menu" class="nav-brand" style="display: flex; align-items: center;">
+            <img src="/images/logo.png" alt="CampusBite Logo" style="height: 65px;">
+        </a>
+        <div class="nav-links">
+            <div class="sidebar-logo">
+                <img src="/images/logo.png" alt="CampusBite Logo" style="height: 50px;">
+                <button onclick="toggleNav()" style="background: transparent; border: none; font-size: 1.5rem; color: var(--text-main); cursor: pointer;"><i class="fa-solid fa-bars"></i></button>
+            </div>
+            <a href="/student/menu"><i class="fa-solid fa-utensils"></i> Menu</a>
+
+            <a href="/student/my-orders"><i class="fa-solid fa-clipboard-list"></i> My Orders</a>
+            <a href="/student/my-payments" class="active"><i class="fa-solid fa-wallet"></i> My Payments</a>
+            <a href="/student/profile" class="mobile-nav-item"><i class="fa-regular fa-user"></i> Profile</a>
+        </div>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <a href="/student/cart" class="nav-cart" id="navCartLink">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span class="badge" id="navCartCount">0</span>
+            </a>
+            <a href="/student/profile" style="text-decoration: none;">
+                <div class="nav-profile">
+                    <img src="https://ui-avatars.com/api/?name=Student&background=random" id="navProfilePic" alt="Profile">
+                    <span class="nav-profile-name" id="navProfileName">Hi, Student ðŸ‘‹</span>
+                </div>
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-layout">
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="menu-header">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <i class="fa-solid fa-wallet" style="font-size: 2rem; color: var(--text-main);"></i>
+                        <div>
+                            <h1 style="font-size: 2rem; margin-bottom: 0.2rem;">My Payments</h1>
+                            <p style="color: var(--text-muted);">View your payment history and invoices.</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <div style="position: relative;">
+                            <input type="text" id="searchPayments" placeholder="Search by Payment ID..." style="padding-left: 2.5rem; width: 250px;">
+                            <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                        </div>
+                        <select id="paymentDateFilter" class="form-control" style="width: auto; background: white;">
+                            <option value="">All Time</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Payment ID</th>
+                                <th>Order ID</th>
+                                <th>Date & Time</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="paymentsTableBody">
+                            <!-- Payments will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div id="paymentPagination" style="display: flex; justify-content: center; margin-top: 2rem; gap: 5px;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reusable Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="/js/student.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Orders - CampusBite Admin</title>
+    <link rel="icon" type="image/png" href="/images/favicon.png">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/admin-layout.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    
+    <!-- Common Navbar -->
+    <div class="nav-overlay" onclick="toggleNav()"></div>
+    <nav class="navbar">
+        <button class="nav-toggle-btn" onclick="toggleNav()"><i class="fa-solid fa-bars"></i></button>
+        <a href="/admin/dashboard.html" class="nav-brand" style="display: flex; align-items: center;">
+            <img src="/images/logo.png" alt="CampusBite Logo" style="height: 65px;">
+        </a>
+        <div class="nav-links">
+            <div class="sidebar-logo">
+                <img src="/images/logo.png" alt="CampusBite Logo" style="height: 50px;">
+                <button onclick="toggleNav()" style="background: transparent; border: none; font-size: 1.5rem; color: var(--text-main); cursor: pointer;"><i class="fa-solid fa-bars"></i></button>
+            </div>
+            <a href="/admin/dashboard.html"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+            <a href="/admin/menu-management.html"><i class="fa-solid fa-burger"></i> Menu Management</a>
+            <a href="/admin/orders.html" class="active"><i class="fa-solid fa-receipt"></i> Orders</a>
+            <a href="/admin/payments.html"><i class="fa-solid fa-wallet"></i> Payments</a>
+            <a href="#" onclick="handleLogout()" class="mobile-nav-item"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+        </div>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <div class="nav-profile">
+                <img src="https://ui-avatars.com/api/?name=Admin&background=random" alt="Admin">
+                <span class="nav-profile-name">Admin Portal</span>
+            </div>
+            <button class="btn btn-outline" style="border-color: var(--danger); color: var(--danger); padding: 0.5rem 1rem;" onclick="handleLogout()">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+            </button>
+        </div>
+    </nav>
+
+    <div class="container" style="padding-top: 2rem;">
+        <div class="admin-page-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+            <h2 class="admin-page-title" style="margin: 0;">Orders</h2>
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <input type="date" id="customDateFilter" style="width: auto; padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border-color); font-family: inherit;">
+                <select id="dateFilter" style="width: auto; padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border-color); font-family: inherit; font-weight: 500; background: white;">
+                    <option value="all">All Time</option>
+                    <option value="today">Today</option>
+                    <option value="week">This Week</option>
+                    <option value="month">This Month</option>
+                </select>
+            </div>
+        </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: var(--info-bg); color: var(--info);"><i class="fa-solid fa-receipt"></i></div>
+                    <div class="stat-content">
+                        <h3 id="statTotalOrders">0</h3>
+                        <p>Total Orders</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: var(--warning-bg); color: var(--warning);"><i class="fa-solid fa-clock"></i></div>
+                    <div class="stat-content">
+                        <h3 id="statPendingOrders">0</h3>
+                        <p>Pending</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #e0e7ff; color: #4f46e5;"><i class="fa-solid fa-bell-concierge"></i></div>
+                    <div class="stat-content">
+                        <h3 id="statReadyOrders">0</h3>
+                        <p>Food Ready</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: var(--success-bg); color: var(--success);"><i class="fa-solid fa-check-double"></i></div>
+                    <div class="stat-content">
+                        <h3 id="statServedOrders">0</h3>
+                        <p>Served</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-table-container" style="overflow-x: auto;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Student</th>
+                                <th>Items</th>
+                                <th>Pickup Time</th>
+                                <th>Amount</th>
+                                <th>Payment</th>
+                                <th>Status Update</th>
+                                <th>Order Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                            <!-- JS injected -->
+                        </tbody>
+                    </table>
+                </div>
+    </div>
+
+    <!-- Status Update Confirmation Modal -->
+    <div class="modal" id="statusConfirmModal">
+        <div class="modal-content" style="max-width: 400px; text-align: center; padding: 2rem;">
+            <div style="font-size: 3rem; color: var(--warning); margin-bottom: 1rem;">
+                <i class="fa-solid fa-circle-exclamation"></i>
+            </div>
+            <h3 style="font-family: 'Space Grotesk', sans-serif; margin-bottom: 1rem;">Confirm Status Update</h3>
+            <p style="color: var(--text-muted); margin-bottom: 2rem;" id="statusConfirmText">Are you sure you want to update this order?</p>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button class="btn btn-outline" onclick="closeStatusModal()">Cancel</button>
+                <button class="btn btn-primary" id="confirmStatusBtn">Update Status</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/admin.js"></script>
+</body>
+</html>
+

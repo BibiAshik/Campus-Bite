@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - CampusBite</title>
+    <link rel="icon" type="image/png" href="/images/favicon.png">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="auth-wrapper">
+        <div class="auth-left">
+            <img src="/images/logo.png" alt="CampusBite Logo" style="height: 100px; margin-bottom: 0.5rem; max-width: 100%; object-fit: contain;">
+            <h1 style="margin-top: 0; font-size: 2rem;">Admin Portal</h1>
+            <p>Manage orders, update menus, and keep track of all campus food operations from one place.</p>
+        </div>
+        <div class="auth-right">
+            <!-- Mobile Brand Header (Visible only on mobile) -->
+            <div class="mobile-brand-header">
+                <h2>CampusBite <span style="color:var(--primary);">Admin</span></h2>
+                <p>Manage campus food operations centrally.</p>
+            </div>
+            
+            <div class="auth-card">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <img src="/images/logo.png" alt="CampusBite Logo" style="height: 60px; margin-bottom: 1rem;">
+                    <h2 style="color: var(--text-main); margin: 0;">Admin <span style="color: var(--primary);">Login</span></h2>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Sign in to access the dashboard</p>
+                </div>
+                
+                <form id="adminLoginForm">
+                    <div class="form-group">
+                        <label for="username" style="font-weight: 600;">Username</label>
+                        <div style="position: relative;">
+                            <i class="fa-regular fa-user" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                            <input type="text" id="username" name="username" class="form-control" placeholder="Enter admin username" style="padding-left: 45px;" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" style="font-weight: 600;">Password</label>
+                        <div style="position: relative;">
+                            <i class="fa-solid fa-lock" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                            <input type="password" id="password" name="password" class="form-control" placeholder="Enter admin password" style="padding-left: 45px;" required>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 1rem; font-size: 1.1rem; margin-top: 1rem;">
+                        Login to Dashboard <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Mobile Brand Footer (Visible only on mobile) -->
+            <div class="mobile-brand-footer">
+                <i class="fa-solid fa-lock"></i> Secure Staff Portal
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/admin.js"></script>
+</body>
+</html>
+

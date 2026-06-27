@@ -135,6 +135,13 @@ if [ -z "$JAVACMD" ]; then
 fi
 
 if [ ! -x "$JAVACMD" ]; then
+  JAVACMD="$(
+    \unset -f command 2>/dev/null
+    \command -v java
+  )"
+fi
+
+if [ ! -x "$JAVACMD" ]; then
   echo "Error: JAVA_HOME is not defined correctly." >&2
   echo "  We cannot execute $JAVACMD" >&2
   exit 1

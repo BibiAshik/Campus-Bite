@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login - CampusBite</title>
+    <link rel="icon" type="image/png" href="/images/favicon.png">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="auth-wrapper">
+        <div class="auth-left">
+            <h1 style="color: var(--text-main); margin-bottom: 0.5rem;">Welcome to</h1>
+            <img src="/images/logo.png" alt="CampusBite Logo" style="height: 100px; margin-bottom: 1.5rem; max-width: 100%; object-fit: contain;">
+            <h2 style="color: var(--primary); margin-bottom: 2rem; font-family: 'Outfit', sans-serif; font-weight: 500;">Student Portal</h2>
+            <p>Login with your college Google account to explore menus, place orders, and enjoy delicious food on campus.</p>
+        </div>
+        <div class="auth-right">
+            <!-- Mobile Brand Header (Visible only on mobile) -->
+            <div class="mobile-brand-header">
+                <img src="/images/logo.png" alt="CampusBite Logo">
+                <h2>CampusBite</h2>
+                <p>Fast, fresh, campus food. Zero wait.</p>
+            </div>
+            
+            <div class="auth-card">
+                <div style="font-size: 3rem; color: #f59e0b; margin-bottom: 1rem;"><i class="fa-solid fa-user-graduate"></i></div>
+                <h2 style="color: var(--text-main); margin-bottom: 1.5rem;">Student <span style="color: var(--primary);">Login</span></h2>
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem;">Login using your official college Google account.</p>
+                
+                <div id="errorMessage" class="error"></div>
+                
+                <div class="info-box">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span>Only @sairamtap.edu.in email accounts are allowed to login.</span>
+                </div>
+
+                <a href="/oauth2/authorization/google" class="google-btn">
+                    <i class="fa-brands fa-google" style="color: #4285F4; font-size: 1.2rem;"></i>
+                    Continue with Google
+                </a>
+
+                <div class="divider">Why Google Login?</div>
+
+                <div class="benefits">
+                    <div class="benefit-item">
+                        <div class="benefit-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                        <div class="benefit-text">
+                            <h4>Secure & Safe</h4>
+                            <p>Your account is protected by Google.</p>
+                        </div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon"><i class="fa-regular fa-user"></i></div>
+                        <div class="benefit-text">
+                            <h4>One Step Access</h4>
+                            <p>No need to remember another password.</p>
+                        </div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon"><i class="fa-regular fa-circle-check"></i></div>
+                        <div class="benefit-text">
+                            <h4>Verified Students Only</h4>
+                            <p>Only college students can access.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="privacy-box">
+                    <i class="fa-solid fa-lock"></i>
+                    <span>We respect your privacy. Your information is safe and will not be shared.</span>
+                </div>
+            </div>
+            
+            <!-- Mobile Brand Footer (Visible only on mobile) -->
+            <div class="mobile-brand-footer">
+                <i class="fa-solid fa-shield-halved"></i> Strictly for @sairamtap.edu.in students
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('error')) {
+            const errorDiv = document.getElementById('errorMessage');
+            if (urlParams.get('error') === 'invalid-domain') {
+                errorDiv.innerText = "Please login with your official college email ID (@sairamtap.edu.in).";
+            } else {
+                errorDiv.innerText = "Authentication failed. Please try again.";
+            }
+            errorDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
+

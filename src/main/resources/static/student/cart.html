@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart - CampusBite</title>
+    <link rel="icon" type="image/png" href="/images/favicon.png">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Common Navbar -->
+    <div class="nav-overlay" onclick="toggleNav()"></div>
+    <nav class="navbar">
+        <button class="nav-toggle-btn" onclick="toggleNav()"><i class="fa-solid fa-bars"></i></button>
+        <a href="/student/menu" class="nav-brand" style="display: flex; align-items: center;">
+            <img src="/images/logo.png" alt="CampusBite Logo" style="height: 65px;">
+        </a>
+        <div class="nav-links">
+            <div class="sidebar-logo">
+                <img src="/images/logo.png" alt="CampusBite Logo" style="height: 50px;">
+                <button onclick="toggleNav()" style="background: transparent; border: none; font-size: 1.5rem; color: var(--text-main); cursor: pointer;"><i class="fa-solid fa-bars"></i></button>
+            </div>
+            <a href="/student/menu"><i class="fa-solid fa-utensils"></i> Menu</a>
+
+            <a href="/student/my-orders"><i class="fa-solid fa-clipboard-list"></i> My Orders</a>
+            <a href="/student/my-payments"><i class="fa-solid fa-wallet"></i> My Payments</a>
+            <a href="/student/profile" class="mobile-nav-item"><i class="fa-regular fa-user"></i> Profile</a>
+        </div>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <a href="/student/cart" class="nav-cart" id="navCartLink">
+                <i class="fa-solid fa-cart-shopping" style="color: var(--primary);"></i>
+                <span class="badge" id="navCartCount">0</span>
+            </a>
+            <a href="/student/profile" style="text-decoration: none;">
+                <div class="nav-profile">
+                    <img src="https://ui-avatars.com/api/?name=Student&background=random" id="navProfilePic" alt="Profile">
+                    <span class="nav-profile-name" id="navProfileName">Hi, Student 👋</span>
+                </div>
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-layout">
+            <!-- Left Side: Cart Items -->
+            <div class="main-content">
+                <div class="menu-header">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <i class="fa-solid fa-cart-shopping" style="font-size: 2rem; color: var(--text-main);"></i>
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <h1 style="font-size: 2rem;">Your Cart</h1>
+                                <span style="background: #fff7ed; color: var(--primary); padding: 4px 10px; border-radius: 20px; font-weight: 600; font-size: 0.9rem;" id="cartTitleCount">0 Items</span>
+                            </div>
+                            <p style="color: var(--text-muted);">Review your items and proceed to checkout</p>
+                        </div>
+                    </div>
+                    <a href="/student/menu" class="btn btn-outline" style="background: white; border-color: var(--border-color); color: var(--text-main);">
+                        <i class="fa-solid fa-arrow-left"></i> Continue Shopping
+                    </a>
+                </div>
+
+                <div id="cartItemsContainer">
+                    <!-- Cart items injected here -->
+                </div>
+            </div>
+
+            <!-- Right Sidebar: Order Summary -->
+            <div class="cart-sidebar">
+                <h3 style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-receipt" style="color: var(--primary);"></i> 
+                    Order Summary
+                </h3>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <div class="summary-row">
+                        <span>Subtotal (<span id="summaryCount">0</span> items)</span>
+                        <span id="cartSubtotal">₹0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>GST (5%)</span>
+                        <span id="cartGst">₹0.00</span>
+                    </div>
+                    
+                    <div class="summary-total" style="background: #fff7ed; padding: 1rem; border-radius: 8px; border: 1px solid #ffedd5; margin-top: 0; align-items: center;">
+                        <span style="font-size: 1.1rem;">Grand Total</span>
+                        <span id="cartTotal" style="color: var(--primary); font-size: 1.5rem;">₹0.00</span>
+                    </div>
+                </div>
+
+                <button id="btnProceedCheckout" class="btn btn-primary" style="width: 100%; justify-content: space-between; font-size: 1.1rem; padding: 1rem;">
+                    Proceed to Checkout <i class="fa-solid fa-arrow-right"></i>
+                </button>
+                <p style="text-align: center; color: var(--text-muted); font-size: 0.75rem; margin-top: 10px;">You will be redirected to Razorpay secure payment gateway.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reusable Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="/js/student.js"></script>
+</body>
+</html>

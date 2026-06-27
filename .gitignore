@@ -33,3 +33,9 @@ logs/
 # Windows OS
 Thumbs.db
 desktop.ini
+
+# Local Dev Secrets
+application-local.properties
+
+# Uploaded Images
+uploads/
