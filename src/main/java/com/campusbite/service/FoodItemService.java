@@ -1,17 +1,13 @@
 package com.campusbite.service;
 
-import com.campusbite.dto.request.FoodItemRequestDTO;
-import com.campusbite.dto.response.FoodItemResponseDTO;
 import com.campusbite.entity.FoodItem;
 import com.campusbite.exception.ResourceNotFoundException;
-import com.campusbite.mapper.FoodItemMapper;
 import com.campusbite.repository.FoodItemRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Service for managing food items.
@@ -21,12 +17,10 @@ import java.util.stream.Collectors;
 public class FoodItemService {
 
     private final FoodItemRepository foodItemRepository;
-    private final FoodItemMapper foodItemMapper;
     private final ImageUploadService imageUploadService;
 
-    public FoodItemService(FoodItemRepository foodItemRepository, FoodItemMapper foodItemMapper, ImageUploadService imageUploadService) {
+    public FoodItemService(FoodItemRepository foodItemRepository, ImageUploadService imageUploadService) {
         this.foodItemRepository = foodItemRepository;
-        this.foodItemMapper = foodItemMapper;
         this.imageUploadService = imageUploadService;
     }
 
@@ -41,31 +35,11 @@ public class FoodItemService {
     }
 
     /**
-     * Purpose: Fetch all food items as DTOs for the frontend.
-     * Output: List of FoodItemResponseDTO.
-     */
-    public List<FoodItemResponseDTO> getAllFoodItemsAsDTO() {
-        return foodItemRepository.findAll().stream()
-                .map(foodItemMapper::toResponseDTO)
-                .collect(Collectors.toList());
-    }
-
-    /**
      * Purpose: Fetch a single food item by ID as a raw entity (kept for backward compatibility).
      */
     public FoodItem getFoodItemById(Long id) {
         return foodItemRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Food item not found with id: " + id));
-    }
-
-    /**
-     * Purpose: Fetch a single food item by ID as DTO.
-     * Output: FoodItemResponseDTO.
-     */
-    public FoodItemResponseDTO getFoodItemByIdAsDTO(Long id) {
-        FoodItem foodItem = foodItemRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Food item not found with id: " + id));
-        return foodItemMapper.toResponseDTO(foodItem);
     }
 
     // --- Simple Write Operations ---
@@ -91,13 +65,8 @@ public class FoodItemService {
 
     /**
      * Purpose: Saves a new food item with an optional uploaded image.
-     * Input: FoodItemRequestDTO — the food item details from the admin form.
-     *        MultipartFile — the uploaded image file, nullable (admin may not upload one).
-     * Output: FoodItemResponseDTO of the saved food item.
      */
-    public FoodItemResponseDTO addFoodItem(FoodItemRequestDTO dto, MultipartFile image) throws IOException {
-        FoodItem foodItem = foodItemMapper.toEntity(dto);
-
+    public FoodItem addFoodItem(FoodItem foodItem, MultipartFile image) throws IOException {
         if (image != null && !image.isEmpty()) {
             // Admin uploaded an image — save it and store the URL
             String imageUrl = imageUploadService.saveImage(image);
@@ -107,29 +76,23 @@ public class FoodItemService {
             foodItem.setImageUrl("/images/food/placeholder.jpg");
         }
 
-        FoodItem saved = foodItemRepository.save(foodItem);
-        return foodItemMapper.toResponseDTO(saved);
+        return foodItemRepository.save(foodItem);
     }
 
     /**
      * Purpose: Updates an existing food item. If a new image is uploaded, replaces the old one.
-     *          If no new image is uploaded, keeps the existing image unchanged.
-     * Input: id — the food item ID to update.
-     *        FoodItemRequestDTO — updated details.
-     *        MultipartFile — new image file, nullable.
-     * Output: FoodItemResponseDTO of the updated food item.
      */
-    public FoodItemResponseDTO updateFoodItem(Long id, FoodItemRequestDTO dto, MultipartFile image) throws IOException {
+    public FoodItem updateFoodItem(Long id, FoodItem incomingItem, MultipartFile image) throws IOException {
         FoodItem existing = foodItemRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Food item not found with id: " + id));
 
         // Update all text fields
-        existing.setName(dto.getName());
-        existing.setCategory(dto.getCategory());
-        existing.setPrice(dto.getPrice());
-        existing.setIsVeg(dto.isVeg());
-        existing.setDescription(dto.getDescription());
-        existing.setQuantityAvailable(dto.getQuantityAvailable());
+        existing.setName(incomingItem.getName());
+        existing.setCategory(incomingItem.getCategory());
+        existing.setPrice(incomingItem.getPrice());
+        existing.setIsVeg(incomingItem.getIsVeg());
+        existing.setDescription(incomingItem.getDescription());
+        existing.setQuantityAvailable(incomingItem.getQuantityAvailable());
 
         if (image != null && !image.isEmpty()) {
             // Admin uploaded a new image — delete the old uploaded image (if it was one)
@@ -140,7 +103,6 @@ public class FoodItemService {
             // If no new image -> keep existing.getImageUrl() unchanged — do nothing
         }
 
-        FoodItem saved = foodItemRepository.save(existing);
-        return foodItemMapper.toResponseDTO(saved);
+        return foodItemRepository.save(existing);
     }
 }

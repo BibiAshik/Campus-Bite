@@ -1,7 +1,6 @@
 package com.campusbite.service;
 
-import com.campusbite.dto.request.CartItemRequestDTO;
-import com.campusbite.dto.response.CartItemResponseDTO;
+
 import com.campusbite.entity.CartItem;
 import com.campusbite.entity.FoodItem;
 import com.campusbite.entity.Student;
@@ -35,23 +34,21 @@ public class CartItemService {
 
     // --- Simple Read Operations ---
 
-    public List<CartItemResponseDTO> getCartItems(String email) {
+    public List<CartItem> getCartItems(String email) {
         Student student = getStudentByEmail(email);
-        return cartItemRepository.findByStudent(student).stream()
-                .map(this::mapToResponseDTO)
-                .collect(Collectors.toList());
+        return cartItemRepository.findByStudent(student);
     }
 
     // --- Write / Transaction Operations ---
 
     @Transactional
-    public CartItemResponseDTO addToCart(String email, CartItemRequestDTO request) {
+    public CartItem addToCart(String email, Long foodItemId, int quantity) {
         Student student = getStudentByEmail(email);
-        FoodItem foodItem = foodItemRepository.findById(request.getFoodItemId())
+        FoodItem foodItem = foodItemRepository.findById(foodItemId)
                 .orElseThrow(() -> new ResourceNotFoundException("Food item not found"));
 
         if (foodItem.getQuantityAvailable() == null || foodItem.getQuantityAvailable() <= 0) {
-            throw new RuntimeException("Food item is currently out of stock");
+            throw new IllegalArgumentException("Food item is currently out of stock");
         }
 
         Optional<CartItem> existingItem = cartItemRepository.findByStudentAndFoodItem(student, foodItem);
@@ -59,25 +56,25 @@ public class CartItemService {
         CartItem cartItem;
         if (existingItem.isPresent()) {
             cartItem = existingItem.get();
-            cartItem.setQuantity(cartItem.getQuantity() + request.getQuantity());
+            cartItem.setQuantity(cartItem.getQuantity() + quantity);
         } else {
             cartItem = new CartItem();
             cartItem.setStudent(student);
             cartItem.setFoodItem(foodItem);
-            cartItem.setQuantity(request.getQuantity());
+            cartItem.setQuantity(quantity);
         }
 
-        return mapToResponseDTO(cartItemRepository.save(cartItem));
+        return cartItemRepository.save(cartItem);
     }
 
     @Transactional
-    public CartItemResponseDTO updateCartItemQuantity(String email, Long cartItemId, int quantity) {
+    public CartItem updateCartItemQuantity(String email, Long cartItemId, int quantity) {
         Student student = getStudentByEmail(email);
         CartItem cartItem = cartItemRepository.findById(cartItemId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart item not found"));
 
         if (!cartItem.getStudent().getId().equals(student.getId())) {
-            throw new RuntimeException("Unauthorized to modify this cart item");
+            throw new SecurityException("Unauthorized to modify this cart item");
         }
 
         if (quantity <= 0) {
@@ -86,7 +83,7 @@ public class CartItemService {
         }
 
         cartItem.setQuantity(quantity);
-        return mapToResponseDTO(cartItemRepository.save(cartItem));
+        return cartItemRepository.save(cartItem);
     }
 
     @Transactional
@@ -96,7 +93,7 @@ public class CartItemService {
                 .orElseThrow(() -> new ResourceNotFoundException("Cart item not found"));
 
         if (!cartItem.getStudent().getId().equals(student.getId())) {
-            throw new RuntimeException("Unauthorized to delete this cart item");
+            throw new SecurityException("Unauthorized to delete this cart item");
         }
 
         cartItemRepository.delete(cartItem);
@@ -113,20 +110,5 @@ public class CartItemService {
     private Student getStudentByEmail(String email) {
         return studentRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
-    }
-
-    private CartItemResponseDTO mapToResponseDTO(CartItem item) {
-        FoodItem food = item.getFoodItem();
-        return CartItemResponseDTO.builder()
-                .id(item.getId())
-                .foodItemId(food.getId())
-                .name(food.getName())
-                .description(food.getDescription())
-                .price(food.getPrice())
-                .imageUrl(food.getImageUrl())
-                .isVeg(food.getIsVeg())
-                .quantity(item.getQuantity())
-                .totalItemPrice(food.getPrice() * item.getQuantity())
-                .build();
     }
 }

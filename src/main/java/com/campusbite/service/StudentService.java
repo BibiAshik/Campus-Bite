@@ -1,9 +1,7 @@
 package com.campusbite.service;
 
-import com.campusbite.dto.response.StudentResponseDTO;
 import com.campusbite.entity.Student;
 import com.campusbite.exception.ResourceNotFoundException;
-import com.campusbite.mapper.StudentMapper;
 import com.campusbite.repository.StudentRepository;
 import org.springframework.stereotype.Service;
 
@@ -13,11 +11,9 @@ import java.time.LocalDateTime;
 public class StudentService {
 
     private final StudentRepository studentRepository;
-    private final StudentMapper studentMapper;
 
-    public StudentService(StudentRepository studentRepository, StudentMapper studentMapper) {
+    public StudentService(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
-        this.studentMapper = studentMapper;
     }
 
     /**
@@ -38,20 +34,18 @@ public class StudentService {
     /**
      * Purpose: Fetch student profile by email.
      */
-    public StudentResponseDTO getStudentByEmail(String email) {
-        Student student = studentRepository.findByEmail(email)
+    public Student getStudentByEmail(String email) {
+        return studentRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
-        return studentMapper.toResponseDTO(student);
     }
 
     /**
      * Purpose: Student updates their phone number from Profile page.
      */
-    public StudentResponseDTO updateStudentPhone(String email, String phone) {
+    public Student updateStudentPhone(String email, String phone) {
         Student student = studentRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
         student.setPhone(phone);
-        Student updated = studentRepository.save(student);
-        return studentMapper.toResponseDTO(updated);
+        return studentRepository.save(student);
     }
 }

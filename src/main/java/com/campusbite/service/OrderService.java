@@ -9,17 +9,16 @@ import com.campusbite.entity.OrderItem;
 import com.campusbite.entity.PaymentStatus;
 import com.campusbite.entity.Student;
 import com.campusbite.exception.ResourceNotFoundException;
-import com.campusbite.mapper.OrderMapper;
 import com.campusbite.repository.FoodItemRepository;
 import com.campusbite.repository.OrderRepository;
 import com.campusbite.repository.StudentRepository;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Service for managing student orders.
@@ -31,13 +30,11 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final FoodItemRepository foodItemRepository;
     private final StudentRepository studentRepository;
-    private final OrderMapper orderMapper;
 
-    public OrderService(OrderRepository orderRepository, FoodItemRepository foodItemRepository, StudentRepository studentRepository, OrderMapper orderMapper) {
+    public OrderService(OrderRepository orderRepository, FoodItemRepository foodItemRepository, StudentRepository studentRepository) {
         this.orderRepository = orderRepository;
         this.foodItemRepository = foodItemRepository;
         this.studentRepository = studentRepository;
-        this.orderMapper = orderMapper;
     }
 
     // --- Simple Read Operations ---
@@ -57,46 +54,39 @@ public class OrderService {
     /**
      * Purpose: Get orders for a specific student, optionally filtered by status and dates.
      */
-    public List<OrderResponseDTO> getOrdersByStudentEmail(String studentEmail, String status, LocalDateTime startDate, LocalDateTime endDate) {
-        List<Order> orders;
+    public List<Order> getOrdersByStudentEmail(String studentEmail, String status, LocalDateTime startDate, LocalDateTime endDate) {
         if (startDate != null && endDate != null) {
             if ("ALL".equalsIgnoreCase(status)) {
-                orders = orderRepository.findByStudentEmailAndOrderDateBetweenOrderByOrderDateDesc(studentEmail, startDate, endDate);
+                return orderRepository.findByStudentEmailAndOrderDateBetweenOrderByOrderDateDesc(studentEmail, startDate, endDate);
             } else {
-                orders = orderRepository.findByStudentEmailAndStatusAndOrderDateBetweenOrderByOrderDateDesc(studentEmail, status, startDate, endDate);
+                return orderRepository.findByStudentEmailAndStatusAndOrderDateBetweenOrderByOrderDateDesc(studentEmail, status, startDate, endDate);
             }
         } else {
             if ("ALL".equalsIgnoreCase(status)) {
-                orders = orderRepository.findByStudentEmailOrderByOrderDateDesc(studentEmail);
+                return orderRepository.findByStudentEmailOrderByOrderDateDesc(studentEmail);
             } else {
-                orders = orderRepository.findByStudentEmailAndStatusOrderByOrderDateDesc(studentEmail, status);
+                return orderRepository.findByStudentEmailAndStatusOrderByOrderDateDesc(studentEmail, status);
             }
         }
-        
-        return orders.stream()
-                .map(orderMapper::toResponseDTO)
-                .collect(Collectors.toList());
     }
 
     /**
      * Purpose: Get orders by status and date range (used by Admin).
      */
-    public List<OrderResponseDTO> getOrdersByStatusAndDate(String status, LocalDateTime startDate, LocalDateTime endDate) {
-        List<Order> orders;
+    public List<Order> getOrdersByStatusAndDate(String status, LocalDateTime startDate, LocalDateTime endDate) {
         if (startDate != null && endDate != null) {
             if ("ALL".equalsIgnoreCase(status)) {
-                orders = orderRepository.findByOrderDateBetweenOrderByOrderDateDesc(startDate, endDate);
+                return orderRepository.findByOrderDateBetweenOrderByOrderDateDesc(startDate, endDate);
             } else {
-                orders = orderRepository.findByStatusAndOrderDateBetweenOrderByOrderDateDesc(status, startDate, endDate);
+                return orderRepository.findByStatusAndOrderDateBetweenOrderByOrderDateDesc(status, startDate, endDate);
             }
         } else {
             if ("ALL".equalsIgnoreCase(status)) {
-                orders = orderRepository.findAllByOrderByOrderDateDesc();
+                return orderRepository.findAllByOrderByOrderDateDesc();
             } else {
-                orders = orderRepository.findByStatusOrderByOrderDateDesc(status);
+                return orderRepository.findByStatusOrderByOrderDateDesc(status);
             }
         }
-        return orders.stream().map(orderMapper::toResponseDTO).collect(Collectors.toList());
     }
 
     // --- Simple Write Operations ---
@@ -114,11 +104,9 @@ public class OrderService {
      * Purpose: Places an order for the authenticated student.
      * This is the most complex method — it validates stock, deducts quantities,
      * builds order items, calculates the total, and saves the full order in one transaction.
-     * Input: OrderCreateRequestDTO and studentEmail from JWT.
-     * Output: OrderResponseDTO
      */
     @Transactional
-    public OrderResponseDTO placeOrderForStudent(OrderCreateRequestDTO dto, String studentEmail) {
+    public Order placeOrderForStudent(String studentEmail, OrderCreateRequestDTO request) {
         Student student = studentRepository.findByEmail(studentEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
 
@@ -126,7 +114,7 @@ public class OrderService {
         order.setStudentName(student.getName());
         order.setStudentEmail(student.getEmail());
         order.setRollNumber(""); // Not used anymore as it's auto-filled
-        order.setPickupTime(dto.getPickupTime());
+        order.setPickupTime(request.getPickupTime());
         order.setStatus("PENDING");
         order.setPaymentStatus(PaymentStatus.PENDING);
         order.setOrderDate(LocalDateTime.now());
@@ -138,17 +126,22 @@ public class OrderService {
         double totalAmount = 0.0;
         List<OrderItem> orderItems = new ArrayList<>();
 
-        for (OrderItemRequestDTO itemReq : dto.getItems()) {
+        for (OrderItemRequestDTO itemReq : request.getItems()) {
             FoodItem foodItem = foodItemRepository.findById(itemReq.getFoodItemId())
                     .orElseThrow(() -> new ResourceNotFoundException("Food item not found: " + itemReq.getFoodItemId()));
             
             if (foodItem.getQuantityAvailable() < itemReq.getQuantity()) {
-                throw new RuntimeException("Not enough quantity available for " + foodItem.getName());
+                throw new IllegalArgumentException("Not enough quantity available for " + foodItem.getName());
             }
 
             // Deduct quantity
             foodItem.setQuantityAvailable(foodItem.getQuantityAvailable() - itemReq.getQuantity());
-            foodItemRepository.save(foodItem);
+            
+            try {
+                foodItemRepository.saveAndFlush(foodItem);
+            } catch (ObjectOptimisticLockingFailureException e) {
+                throw new IllegalArgumentException("Sorry, the item '" + foodItem.getName() + "' was just purchased by someone else!");
+            }
 
             OrderItem orderItem = new OrderItem();
             orderItem.setOrder(order);
@@ -163,8 +156,7 @@ public class OrderService {
         order.setTotalAmount(totalAmount);
         order.setItems(orderItems);
 
-        Order saved = orderRepository.save(order);
-        return orderMapper.toResponseDTO(saved);
+        return orderRepository.save(order);
     }
 }
 

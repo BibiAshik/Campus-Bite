@@ -1,12 +1,12 @@
 package com.campusbite.service;
 
-import com.campusbite.dto.response.PaymentResponseDTO;
+import com.campusbite.dto.request.PaymentCreateRequestDTO;
+import com.campusbite.dto.request.PaymentVerifyRequestDTO;
 import com.campusbite.entity.Order;
 import com.campusbite.entity.Payment;
 import com.campusbite.entity.PaymentStatus;
 import com.campusbite.exception.PaymentVerificationException;
 import com.campusbite.exception.ResourceNotFoundException;
-import com.campusbite.mapper.PaymentMapper;
 import com.campusbite.repository.OrderRepository;
 import com.campusbite.repository.PaymentRepository;
 import com.razorpay.RazorpayClient;
@@ -30,7 +30,6 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
-    private final PaymentMapper paymentMapper;
 
     @Value("${razorpay.key.id}")
     private String razorpayKeyId;
@@ -38,15 +37,14 @@ public class PaymentService {
     @Value("${razorpay.key.secret}")
     private String razorpayKeySecret;
 
-    public PaymentService(PaymentRepository paymentRepository, OrderRepository orderRepository, PaymentMapper paymentMapper) {
+    public PaymentService(PaymentRepository paymentRepository, OrderRepository orderRepository) {
         this.paymentRepository = paymentRepository;
         this.orderRepository = orderRepository;
-        this.paymentMapper = paymentMapper;
     }
 
     // --- Simple Read Operations ---
 
-    public List<PaymentResponseDTO> getPaymentsByStudentEmail(String email, String searchId, LocalDateTime startDate, LocalDateTime endDate) {
+    public List<Payment> getPaymentsByStudentEmail(String email, String searchId, LocalDateTime startDate, LocalDateTime endDate) {
         return paymentRepository.findByStudentEmailOrderByCreatedAtDesc(email).stream()
                 .filter(p -> {
                     boolean matchesSearch = searchId == null || searchId.trim().isEmpty() || String.valueOf(p.getId()).contains(searchId.trim());
@@ -54,22 +52,19 @@ public class PaymentService {
                     boolean matchesEndDate = endDate == null || !p.getCreatedAt().isAfter(endDate);
                     return matchesSearch && matchesStartDate && matchesEndDate;
                 })
-                .map(paymentMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
-    public List<PaymentResponseDTO> getAllPayments(LocalDateTime startDate, LocalDateTime endDate) {
-        List<Payment> payments;
+    public List<Payment> getAllPayments(LocalDateTime startDate, LocalDateTime endDate) {
         if (startDate != null && endDate != null) {
-            payments = paymentRepository.findByStatusAndCreatedAtBetweenOrderByCreatedAtDesc(PaymentStatus.PAID, startDate, endDate);
+            return paymentRepository.findByStatusAndCreatedAtBetweenOrderByCreatedAtDesc(PaymentStatus.PAID, startDate, endDate);
         } else {
             // Default to PAID payments only, ordered by date
-            payments = paymentRepository.findAll().stream()
+            return paymentRepository.findAll().stream()
                     .filter(p -> p.getStatus() == PaymentStatus.PAID)
                     .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
                     .collect(Collectors.toList());
         }
-        return payments.stream().map(paymentMapper::toResponseDTO).collect(Collectors.toList());
     }
 
     // --- Complex Transactional Operations (Razorpay Gateway) ---
@@ -79,9 +74,9 @@ public class PaymentService {
      * Communicates with the Razorpay API to initialize a payment session.
      */
     @Transactional
-    public PaymentResponseDTO createRazorpayOrder(Long orderId, String studentEmail) {
+    public Payment createPaymentOrder(String studentEmail, PaymentCreateRequestDTO request) {
         try {
-            Order order = orderRepository.findById(orderId)
+            Order order = orderRepository.findById(request.getOrderId())
                     .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
             if (!order.getStudentEmail().equals(studentEmail)) {
@@ -111,11 +106,10 @@ public class PaymentService {
             payment.setCreatedAt(LocalDateTime.now());
             payment.setUpdatedAt(LocalDateTime.now());
 
-            Payment saved = paymentRepository.save(payment);
-            return paymentMapper.toResponseDTO(saved);
+            return paymentRepository.save(payment);
 
         } catch (RazorpayException e) {
-            throw new RuntimeException("Error creating Razorpay order: " + e.getMessage());
+            throw new IllegalStateException("Error creating Razorpay order: " + e.getMessage());
         }
     }
 
@@ -125,8 +119,8 @@ public class PaymentService {
      * verify the payment signature, then updates both the Order and Payment records atomically.
      */
     @Transactional
-    public PaymentResponseDTO verifyAndCompletePayment(String razorpayOrderId, String razorpayPaymentId, String razorpaySignature, String studentEmail) {
-        Order order = orderRepository.findByRazorpayOrderId(razorpayOrderId)
+    public Payment verifyAndCompletePayment(String studentEmail, PaymentVerifyRequestDTO request) {
+        Order order = orderRepository.findByRazorpayOrderId(request.getRazorpayOrderId())
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with razorpayOrderId"));
 
         if (!order.getStudentEmail().equals(studentEmail)) {
@@ -135,9 +129,9 @@ public class PaymentService {
 
         try {
             JSONObject options = new JSONObject();
-            options.put("razorpay_order_id", razorpayOrderId);
-            options.put("razorpay_payment_id", razorpayPaymentId);
-            options.put("razorpay_signature", razorpaySignature);
+            options.put("razorpay_order_id", request.getRazorpayOrderId());
+            options.put("razorpay_payment_id", request.getRazorpayPaymentId());
+            options.put("razorpay_signature", request.getRazorpaySignature());
 
             boolean isValid = Utils.verifyPaymentSignature(options, razorpayKeySecret);
 
@@ -146,18 +140,17 @@ public class PaymentService {
             }
 
             order.setPaymentStatus(PaymentStatus.PAID);
-            order.setRazorpayPaymentId(razorpayPaymentId);
+            order.setRazorpayPaymentId(request.getRazorpayPaymentId());
             orderRepository.save(order);
 
-            Payment payment = paymentRepository.findByRazorpayOrderId(razorpayOrderId)
+            Payment payment = paymentRepository.findByRazorpayOrderId(request.getRazorpayOrderId())
                     .orElseThrow(() -> new ResourceNotFoundException("Payment record not found"));
 
-            payment.setRazorpayPaymentId(razorpayPaymentId);
+            payment.setRazorpayPaymentId(request.getRazorpayPaymentId());
             payment.setStatus(PaymentStatus.PAID);
             payment.setUpdatedAt(LocalDateTime.now());
-            Payment saved = paymentRepository.save(payment);
+            return paymentRepository.save(payment);
 
-            return paymentMapper.toResponseDTO(saved);
         } catch (RazorpayException e) {
             throw new PaymentVerificationException("Error verifying payment: " + e.getMessage());
         }
