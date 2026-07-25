@@ -2,6 +2,8 @@ package com.campusbite.controller;
 
 import com.campusbite.dto.request.CartItemRequestDTO;
 import com.campusbite.dto.response.CartItemResponseDTO;
+import com.campusbite.entity.CartItem;
+import com.campusbite.mapper.CartItemMapper;
 import com.campusbite.service.CartItemService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/cart")
@@ -16,21 +19,28 @@ import java.util.List;
 public class CartItemController {
 
     private final CartItemService cartItemService;
+    private final CartItemMapper cartItemMapper;
 
-    public CartItemController(CartItemService cartItemService) {
+    public CartItemController(CartItemService cartItemService, CartItemMapper cartItemMapper) {
         this.cartItemService = cartItemService;
+        this.cartItemMapper = cartItemMapper;
     }
 
     @GetMapping
     public ResponseEntity<List<CartItemResponseDTO>> getCart(Principal principal) {
-        return ResponseEntity.ok(cartItemService.getCartItems(principal.getName()));
+        List<CartItemResponseDTO> response = cartItemService.getCartItems(principal.getName())
+                .stream()
+                .map(cartItemMapper::toResponseDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping
     public ResponseEntity<CartItemResponseDTO> addToCart(
             Principal principal,
             @RequestBody CartItemRequestDTO request) {
-        return ResponseEntity.ok(cartItemService.addToCart(principal.getName(), request));
+        CartItem cartItem = cartItemService.addToCart(principal.getName(), request.getFoodItemId(), request.getQuantity());
+        return ResponseEntity.ok(cartItemMapper.toResponseDTO(cartItem));
     }
 
     @PutMapping("/{cartItemId}")
@@ -38,11 +48,11 @@ public class CartItemController {
             Principal principal,
             @PathVariable Long cartItemId,
             @RequestParam int quantity) {
-        CartItemResponseDTO updatedItem = cartItemService.updateCartItemQuantity(principal.getName(), cartItemId, quantity);
+        CartItem updatedItem = cartItemService.updateCartItemQuantity(principal.getName(), cartItemId, quantity);
         if (updatedItem == null) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(updatedItem);
+        return ResponseEntity.ok(cartItemMapper.toResponseDTO(updatedItem));
     }
 
     @DeleteMapping("/{cartItemId}")

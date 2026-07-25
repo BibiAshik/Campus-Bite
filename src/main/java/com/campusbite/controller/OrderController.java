@@ -2,6 +2,7 @@ package com.campusbite.controller;
 
 import com.campusbite.dto.request.OrderCreateRequestDTO;
 import com.campusbite.dto.response.OrderResponseDTO;
+import java.security.Principal;
 import com.campusbite.entity.Order;
 import com.campusbite.mapper.OrderMapper;
 import com.campusbite.service.OrderService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -31,11 +33,10 @@ public class OrderController {
      */
     @PreAuthorize("hasRole('STUDENT')")
     @PostMapping
-    public ResponseEntity<OrderResponseDTO> placeOrder(@Valid @RequestBody OrderCreateRequestDTO request,
-            Authentication authentication) {
-        String studentEmail = authentication.getName(); // JWT subject is email
-        OrderResponseDTO order = orderService.placeOrderForStudent(request, studentEmail);
-        return ResponseEntity.ok(order);
+    public ResponseEntity<OrderResponseDTO> placeOrder(Principal principal, @Valid @RequestBody OrderCreateRequestDTO request) {
+        String studentEmail = principal.getName(); // JWT subject is email
+        Order order = orderService.placeOrderForStudent(studentEmail, request);
+        return ResponseEntity.ok(orderMapper.toResponseDTO(order));
     }
 
     /**
@@ -60,7 +61,10 @@ public class OrderController {
             @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime endDate,
             Authentication authentication) {
         String studentEmail = authentication.getName();
-        return orderService.getOrdersByStudentEmail(studentEmail, status, startDate, endDate);
+        return orderService.getOrdersByStudentEmail(studentEmail, status, startDate, endDate)
+                .stream()
+                .map(orderMapper::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -72,7 +76,10 @@ public class OrderController {
             @RequestParam(defaultValue = "ALL") String status,
             @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime startDate,
             @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime endDate) {
-        return orderService.getOrdersByStatusAndDate(status, startDate, endDate);
+        return orderService.getOrdersByStatusAndDate(status, startDate, endDate)
+                .stream()
+                .map(orderMapper::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -81,7 +88,10 @@ public class OrderController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/pending")
     public List<OrderResponseDTO> getPendingOrders() {
-        return orderService.getOrdersByStatusAndDate("PENDING", null, null);
+        return orderService.getOrdersByStatusAndDate("PENDING", null, null)
+                .stream()
+                .map(orderMapper::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
     /**

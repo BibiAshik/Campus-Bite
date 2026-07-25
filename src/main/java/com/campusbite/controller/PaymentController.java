@@ -3,6 +3,8 @@ package com.campusbite.controller;
 import com.campusbite.dto.request.PaymentCreateRequestDTO;
 import com.campusbite.dto.request.PaymentVerifyRequestDTO;
 import com.campusbite.dto.response.PaymentResponseDTO;
+import com.campusbite.entity.Payment;
+import com.campusbite.mapper.PaymentMapper;
 import com.campusbite.service.PaymentService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -11,15 +13,18 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/payments")
 public class PaymentController {
 
     private final PaymentService paymentService;
+    private final PaymentMapper paymentMapper;
 
-    public PaymentController(PaymentService paymentService) {
+    public PaymentController(PaymentService paymentService, PaymentMapper paymentMapper) {
         this.paymentService = paymentService;
+        this.paymentMapper = paymentMapper;
     }
 
     /**
@@ -29,8 +34,8 @@ public class PaymentController {
     @PostMapping("/create")
     public ResponseEntity<PaymentResponseDTO> createPayment(@Valid @RequestBody PaymentCreateRequestDTO request, Authentication authentication) {
         String studentEmail = authentication.getName();
-        PaymentResponseDTO payment = paymentService.createRazorpayOrder(request.getOrderId(), studentEmail);
-        return ResponseEntity.ok(payment);
+        Payment payment = paymentService.createPaymentOrder(studentEmail, request);
+        return ResponseEntity.ok(paymentMapper.toResponseDTO(payment));
     }
 
     /**
@@ -40,13 +45,8 @@ public class PaymentController {
     @PostMapping("/verify")
     public ResponseEntity<PaymentResponseDTO> verifyPayment(@Valid @RequestBody PaymentVerifyRequestDTO request, Authentication authentication) {
         String studentEmail = authentication.getName();
-        PaymentResponseDTO payment = paymentService.verifyAndCompletePayment(
-                request.getRazorpayOrderId(),
-                request.getRazorpayPaymentId(),
-                request.getRazorpaySignature(),
-                studentEmail
-        );
-        return ResponseEntity.ok(payment);
+        Payment payment = paymentService.verifyAndCompletePayment(studentEmail, request);
+        return ResponseEntity.ok(paymentMapper.toResponseDTO(payment));
     }
 
     /**
@@ -60,7 +60,10 @@ public class PaymentController {
             @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime endDate,
             Authentication authentication) {
         String studentEmail = authentication.getName();
-        return paymentService.getPaymentsByStudentEmail(studentEmail, searchId, startDate, endDate);
+        return paymentService.getPaymentsByStudentEmail(studentEmail, searchId, startDate, endDate)
+                .stream()
+                .map(paymentMapper::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -71,6 +74,9 @@ public class PaymentController {
     public List<PaymentResponseDTO> getAllPayments(
             @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime startDate,
             @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime endDate) {
-        return paymentService.getAllPayments(startDate, endDate);
+        return paymentService.getAllPayments(startDate, endDate)
+                .stream()
+                .map(paymentMapper::toResponseDTO)
+                .collect(Collectors.toList());
     }
 }
