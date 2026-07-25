@@ -36,7 +36,7 @@
             </a>
             <a href="/student/profile" style="text-decoration: none;">
                 <div class="nav-profile">
-                    <img src="https://ui-avatars.com/api/?name=Student&background=random" id="navProfilePic" alt="Profile">
+                    <span class="nav-profile-avatar" id="navProfileInitial">S</span>
                     <span class="nav-profile-name" id="navProfileName">Hi, Student 👋</span>
                 </div>
             </a>
@@ -108,6 +108,18 @@
         </div>
     </div>
 
+    <!-- Error Modal for Concurrency / Out of Stock -->
+    <div id="errorModal" class="modal">
+        <div class="modal-content" style="max-width: 450px; text-align: center; padding: 2rem;">
+            <div style="color: var(--danger); font-size: 4rem; margin-bottom: 1rem;">
+                <i class="fa-solid fa-circle-exclamation"></i>
+            </div>
+            <h2 style="margin-bottom: 1rem;">Oops! Item Unavailable</h2>
+            <p id="errorModalMessage" style="color: var(--text-muted); margin-bottom: 2rem; line-height: 1.5;"></p>
+            <button class="btn btn-primary" onclick="closeErrorModal()" style="width: 100%;">I Understand</button>
+        </div>
+    </div>
+
     <!-- Order Success Modal -->
     <div id="orderSuccessModal" class="modal">
         <div class="modal-content" style="max-width: 400px; text-align: center; padding: 3rem 2rem;">
@@ -128,7 +140,7 @@
     <div id="toastContainer" class="toast-container"></div>
 
     <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
-    <script src="/js/student.js"></script>
+    <script src="/js/common.js"></script><script src="/js/student.js"></script>
 </body>
 </html>
 

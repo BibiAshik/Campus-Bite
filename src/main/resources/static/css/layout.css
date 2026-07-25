@@ -333,6 +333,7 @@
 .profile-content { position: relative; z-index: 2; margin-top: 40px; }
 .profile-img-wrap { width: 140px; height: 140px; border-radius: 50%; padding: 5px; background: white; margin: 0 auto 1.5rem auto; box-shadow: var(--shadow-sm); }
 .profile-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-color); }
+.profile-avatar { display: flex; align-items: center; justify-content: center; background: var(--primary); color: white; font-size: 3.5rem; font-weight: 800; }
 .profile-name { font-size: 2rem; margin-bottom: 0.5rem; color: var(--text-main); font-family: 'Space Grotesk', sans-serif; }
 .profile-college { color: var(--primary); font-weight: 500; font-size: 1.1rem; margin-bottom: 2rem; }
 .profile-details { display: grid; grid-template-columns: 1fr; gap: 1rem; text-align: left; margin-bottom: 2.5rem; background: #f9fafb; padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color); }

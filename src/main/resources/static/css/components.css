@@ -55,6 +55,19 @@
     object-fit: cover;
 }
 
+.nav-profile-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary);
+    color: white;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
 .nav-profile-name {
     font-weight: 600;
     font-size: 0.95rem;

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -37,7 +37,7 @@
             <a href="/student/profile" style="text-decoration: none;">
                 <div class="nav-profile">
                     <img src="https://ui-avatars.com/api/?name=Student&background=random" id="navProfilePic" alt="Profile">
-                    <span class="nav-profile-name" id="navProfileName">Hi, Student ðŸ‘‹</span>
+                    <span class="nav-profile-name" id="navProfileName">Hi, Student 👋</span>
                 </div>
             </a>
         </div>
@@ -84,15 +84,15 @@
                 <div style="border-top: 1px dashed var(--border-color); padding-top: 1rem; margin-bottom: 1.5rem;">
                     <div class="summary-row">
                         <span>Subtotal</span>
-                        <span id="quickCartSubtotal">â‚¹0.00</span>
+                        <span id="quickCartSubtotal">₹0.00</span>
                     </div>
                     <div class="summary-row">
                         <span>GST (5%)</span>
-                        <span id="quickCartGst">â‚¹0.00</span>
+                        <span id="quickCartGst">₹0.00</span>
                     </div>
                     <div class="summary-total">
                         <span>Total</span>
-                        <span id="quickCartTotal" style="color: var(--primary);">â‚¹0.00</span>
+                        <span id="quickCartTotal" style="color: var(--primary);">₹0.00</span>
                     </div>
                 </div>
 
@@ -109,7 +109,19 @@
     <!-- Reusable Toast Container -->
     <div id="toastContainer" class="toast-container"></div>
 
+    <!-- Error Modal for Concurrency / Out of Stock -->
+    <div id="errorModal" class="modal">
+        <div class="modal-content" style="max-width: 450px; text-align: center; padding: 2rem;">
+            <div style="color: var(--danger); font-size: 4rem; margin-bottom: 1rem;">
+                <i class="fa-solid fa-circle-exclamation"></i>
+            </div>
+            <h2 style="margin-bottom: 1rem;">Oops! Item Unavailable</h2>
+            <p id="errorModalMessage" style="color: var(--text-muted); margin-bottom: 2rem; line-height: 1.5;"></p>
+            <button class="btn btn-primary" onclick="closeErrorModal()" style="width: 100%;">I Understand</button>
+        </div>
+    </div>
+
+    <script src="/js/common.js"></script>
     <script src="/js/student.js"></script>
 </body>
 </html>
-
