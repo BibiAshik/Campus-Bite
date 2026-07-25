@@ -1,92 +1,28 @@
-const API_BASE = '/api';
 
-// --- Basic UI Utilities ---
-function toggleNav() {
-    const navLinks = document.querySelector('.nav-links');
-    const overlay = document.querySelector('.nav-overlay');
-    
-    if (navLinks) navLinks.classList.toggle('show');
-    if (overlay) overlay.classList.toggle('show');
-}
-// Utility for fetching with Auth Token
+
+// --- 1. Constants & Config ---
+const ADMIN_TOKEN_KEY = 'adminToken';
+const ADMIN_LOGIN_URL = '/admin/login.html';
+
+// Wrapper for common fetchWithAuth
 async function fetchWithAuth(url, options = {}) {
-    const token = localStorage.getItem('adminToken');
-    if (!token && !url.includes('/login')) {
-        window.location.href = '/admin/login.html';
-        return;
-    }
+    return await apiFetchWithAuth(url, options, ADMIN_TOKEN_KEY, ADMIN_LOGIN_URL);
+}
 
-    const headers = {
-        'Content-Type': 'application/json',
-        ...options.headers,
-        'Authorization': `Bearer ${token}`
-    };
-    
-    if (options.body instanceof FormData) {
-        delete headers['Content-Type']; // Let browser set multipart/form-data boundary
-    }
+function isPaidOrder(order) {
+    return ['PAID', 'SUCCESS', 'COMPLETED'].includes((order.paymentStatus || '').toUpperCase());
+}
 
-    try {
-        const response = await fetch(url, { ...options, headers });
-        if (response.status === 401 || response.status === 403) {
-            localStorage.removeItem('adminToken');
-            window.location.href = '/admin/login.html';
-            return;
+// --- 2. Initialization ---
+document.addEventListener('DOMContentLoaded', () => {
+    if (window.location.pathname.includes('/admin/') && !window.location.pathname.includes('/login')) {
+        if (!localStorage.getItem(ADMIN_TOKEN_KEY)) {
+            window.location.href = ADMIN_LOGIN_URL;
         }
-        return response;
-    } catch (error) {
-        console.error('API Error:', error);
-        throw error;
     }
-}
+});
 
-// Check auth for protected pages
-if (window.location.pathname.includes('/admin/') && !window.location.pathname.includes('/login')) {
-    if (!localStorage.getItem('adminToken')) {
-        window.location.href = '/admin/login.html';
-    }
-}
-
-// Reusable Toast Component
-function showToast(message, type = 'success') {
-    let container = document.getElementById('toastContainer');
-    if (!container) {
-        container = document.createElement('div');
-        container.id = 'toastContainer';
-        container.style.position = 'fixed';
-        container.style.bottom = '20px';
-        container.style.right = '20px';
-        container.style.zIndex = '9999';
-        container.style.display = 'flex';
-        container.style.flexDirection = 'column';
-        container.style.gap = '10px';
-        document.body.appendChild(container);
-    }
-    
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.style.background = 'white';
-    toast.style.padding = '1rem 1.5rem';
-    toast.style.borderRadius = '8px';
-    toast.style.boxShadow = 'var(--shadow-lg)';
-    toast.style.borderLeft = `4px solid ${type === 'success' ? 'var(--success)' : 'var(--danger)'}`;
-    toast.style.display = 'flex';
-    toast.style.alignItems = 'center';
-    toast.style.gap = '12px';
-    toast.style.animation = 'slideInRight 0.3s ease';
-    
-    const icon = type === 'success' ? '<i class="fa-solid fa-circle-check" style="color:var(--success); font-size:1.2rem;"></i>' : '<i class="fa-solid fa-circle-xmark" style="color:var(--danger); font-size:1.2rem;"></i>';
-    toast.innerHTML = `${icon} <span style="font-weight:500;">${message}</span>`;
-    
-    container.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateX(100%)';
-        toast.style.transition = 'all 0.3s ease';
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
-}
+// --- 3. UI Handlers & Core Logic ---
 
 function handleLogout() {
     let modal = document.getElementById('logoutConfirmModal');
@@ -220,7 +156,7 @@ async function loadDashboardOrders() {
         const res = await fetchWithAuth(url);
         if(res.ok) {
             let allOrders = await res.json();
-            const orders = allOrders.filter(o => o.paymentStatus === 'PAID');
+            const orders = allOrders;
             const tbody = document.getElementById('recentOrdersBody');
             tbody.innerHTML = '';
             
@@ -453,7 +389,7 @@ async function loadOrders() {
         const res = await fetchWithAuth(url);
         if(res.ok) {
             let allOrders = await res.json();
-            const orders = allOrders.filter(o => o.paymentStatus === 'PAID');
+            const orders = allOrders;
             
             // Stats
             document.getElementById('statTotalOrders').textContent = orders.length;
@@ -489,9 +425,9 @@ function renderOrdersTable(orders) {
         };
         const statusClass = statusMap[order.status] || 'status-pending';
         
-        const paymentClass = order.paymentStatus === 'PAID' ? 'status-completed' : 'status-failed';
+        const paymentClass = isPaidOrder(order) ? 'status-completed' : 'status-pending';
         
-        const itemsList = order.items.map(i => `${i.foodItemName} (x${i.quantity})`).join(', ');
+        const itemsList = (order.items || []).map(i => `${i.foodItemName} (x${i.quantity})`).join(', ');
         
         tbody.innerHTML += `
         <tr>
@@ -640,6 +576,8 @@ async function loadUpdateForm() {
                 document.getElementById('description').value = item.description;
                 document.getElementById('category').value = item.category || '';
                 document.getElementById('price').value = item.price;
+                const typeEl = document.getElementById('type');
+                if(typeEl) typeEl.value = (item.veg || item.isVeg) ? 'veg' : 'nonveg';
                 
                 document.getElementById('status').value = item.quantityAvailable > 0 ? 'Active' : 'Inactive';
                 
@@ -712,4 +650,3 @@ window.onload = () => {
         if(f) f.addEventListener('submit', (e) => submitFoodItem(e, false));
     }
 };
-

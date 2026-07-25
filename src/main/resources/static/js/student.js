@@ -1,13 +1,4 @@
-const API_BASE = '/api';
-
-// --- Basic UI Utilities ---
-function toggleNav() {
-    const navLinks = document.querySelector('.nav-links');
-    const overlay = document.querySelector('.nav-overlay');
-    
-    if (navLinks) navLinks.classList.toggle('show');
-    if (overlay) overlay.classList.toggle('show');
-}
+// Uses API_BASE and toggleNav from common.js
 // Utility for fetching with Auth Token
 async function fetchWithAuth(url, options = {}) {
     const token = localStorage.getItem('studentToken');
@@ -256,10 +247,24 @@ function renderMenuGrid(foods) {
     }
     
     foods.forEach(item => {
+        const isSoldOut = item.quantityAvailable != null && item.quantityAvailable <= 0;
+        
+        const cardStyle = isSoldOut ? 'opacity: 0.6; pointer-events: none;' : '';
+        const overlayHTML = isSoldOut ? `
+            <div style="position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; border-radius: 12px 12px 0 0;">
+                <span style="color: white; font-weight: 800; font-size: 1.5rem; letter-spacing: 2px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); transform: rotate(-10deg); border: 3px solid white; padding: 5px 15px;">SOLD OUT</span>
+            </div>
+        ` : '';
+        
+        const buttonHTML = isSoldOut 
+            ? `<button class="btn btn-outline" style="width:100%; background: #e5e7eb; color: #9ca3af; border-color: #e5e7eb; cursor: not-allowed; pointer-events: auto;" disabled>Unavailable</button>`
+            : `<button class="btn btn-outline" style="width:100%;" onclick="addToCart(${item.id})">Add to Cart <i class="fa-solid fa-plus"></i></button>`;
+
         grid.innerHTML += `
-        <div class="card">
+        <div class="card" style="${cardStyle}">
             <div style="position: relative;">
                 <img src="${item.imageUrl || 'https://placehold.co/300x200?text=Food'}" class="card-img" alt="${item.name}">
+                ${overlayHTML}
             </div>
             <div class="card-body">
                 <h3 class="card-title">${item.name}</h3>
@@ -268,7 +273,7 @@ function renderMenuGrid(foods) {
                     <div class="card-price">₹${item.price}</div>
                 </div>
                 <div style="margin-top: 1rem; display: flex; gap: 10px;">
-                    <button class="btn btn-outline" style="width:100%;" onclick="addToCart(${item.id})">Add to Cart</button>
+                    ${buttonHTML}
                 </div>
             </div>
         </div>`;
@@ -301,6 +306,16 @@ async function placeOrder() {
         if(!orderRes.ok) {
             btn.innerHTML = originalText;
             btn.disabled = false;
+            
+            try {
+                const errorData = await orderRes.json();
+                if(errorData.message && (errorData.message.includes('Sorry,') || errorData.message.includes('Not enough'))) {
+                    document.getElementById('errorModalMessage').textContent = errorData.message;
+                    document.getElementById('errorModal').style.display = 'flex';
+                    return;
+                }
+            } catch(e) {}
+
             showToast('Failed to create order', 'error');
             return;
         }
@@ -735,5 +750,10 @@ document.addEventListener('DOMContentLoaded', () => {
         btnPay.addEventListener('click', placeOrder);
     }
 });
+
+function closeErrorModal() {
+    document.getElementById('errorModal').style.display = 'none';
+    window.location.href = '/student/menu';
+}
 
 
