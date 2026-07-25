@@ -38,23 +38,23 @@ public class DataInitializer implements CommandLineRunner {
         // Initialize Menu if empty
         if (foodItemRepository.count() == 0) {
             List<FoodItem> items = List.of(
-                    new FoodItem(null, "Classic Burger", "Non-Veg", 120.0, "/images/food/burger.jpg", 50, false,
+                    new FoodItem(null, "Classic Burger", "Non-Veg", 120.0, "/images/food/burger.jpg", 50, 0L, false,
                             "Juicy chicken patty with fresh lettuce and cheese."),
-                    new FoodItem(null, "Veggie Sandwich", "Veg", 60.0, "/images/food/sandwich.jpg", 30, true,
+                    new FoodItem(null, "Veggie Sandwich", "Veg", 60.0, "/images/food/sandwich.jpg", 30, 0L, true,
                             "Healthy sandwich with fresh cucumber, tomato, and mayo."),
-                    new FoodItem(null, "Chicken Fried Rice", "Non-Veg", 150.0, "/images/food/fried-rice.jpg", 40, false,
+                    new FoodItem(null, "Chicken Fried Rice", "Non-Veg", 150.0, "/images/food/fried-rice.jpg", 40, 0L, false,
                             "Wok-tossed rice with chicken chunks and veggies."),
-                    new FoodItem(null, "Chicken Shawarma", "Non-Veg", 100.0, "/images/food/shawarma.jpg", 60, false,
+                    new FoodItem(null, "Chicken Shawarma", "Non-Veg", 100.0, "/images/food/shawarma.jpg", 60, 0L, false,
                             "Authentic Arabic style chicken shawarma wrap."),
-                    new FoodItem(null, "French Fries", "Veg", 80.0, "/images/food/fries.jpg", 100, true,
+                    new FoodItem(null, "French Fries", "Veg", 80.0, "/images/food/fries.jpg", 100, 0L, true,
                             "Crispy golden french fries with peri-peri seasoning."),
-                    new FoodItem(null, "Student Combo Meal", "Combos", 200.0, "/images/food/combo-meal.jpg", 20, false,
+                    new FoodItem(null, "Student Combo Meal", "Combos", 200.0, "/images/food/combo-meal.jpg", 20, 0L, false,
                             "Burger, Fries, and a Coke."),
-                    new FoodItem(null, "Coca Cola", "Beverages", 40.0, "/images/food/coke.jpg", 100, true,
+                    new FoodItem(null, "Coca Cola", "Beverages", 40.0, "/images/food/coke.jpg", 100, 0L, true,
                             "Chilled Coca Cola 300ml."),
-                    new FoodItem(null, "Fresh Lemon Juice", "Beverages", 30.0, "/images/food/lemon-juice.jpg", 50, true,
+                    new FoodItem(null, "Fresh Lemon Juice", "Beverages", 30.0, "/images/food/lemon-juice.jpg", 50, 0L, true,
                             "Freshly squeezed sweet and salt lemon juice."),
-                    new FoodItem(null, "Veg Noodles", "Veg", 110.0, "/images/food/noodles.jpg", 40, true,
+                    new FoodItem(null, "Veg Noodles", "Veg", 110.0, "/images/food/noodles.jpg", 40, 0L, true,
                             "Hakka style veg noodles with spring onions."));
             foodItemRepository.saveAll(items);
         }
