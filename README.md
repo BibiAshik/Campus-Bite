@@ -6,6 +6,25 @@ CampusBite provides a seamless experience for students to browse menus, add item
 
 ---
 
+## ✨ Features
+
+### For Students:
+* **Secure Login:** Google OAuth2 authentication restricted to official college email domains (`@sairamtap.edu.in`).
+* **Live Menu:** Browse dynamic food categories and up-to-date item availability.
+* **Shopping Cart:** Add, remove, and adjust quantities of food items before checkout.
+* **Online Payments:** Fully integrated Razorpay gateway for seamless transactions.
+* **Order Tracking:** View order history, payment statuses, and real-time order states.
+
+### For Admins:
+* **Centralized Dashboard:** View total revenue, active orders, and pending tasks at a glance.
+* **Menu Management:** Add new food items, upload high-quality images, and adjust pricing/availability.
+* **Order Processing:** Update order statuses (Pending -> Preparing -> Ready -> Delivered) in real-time.
+* **Role-Based Security:** Secure JWT-based authentication ensuring only authorized staff can access the portal.
+---
+## Multithreading & Concurrency
+- **Optimistic Locking:** Implemented at the database level to prevent race conditions during high-traffic checkouts. Ensures high-demand food items do not oversell when multiple students attempt to purchase the exact same stock simultaneously.
+---
+
 ## 📸 Screenshots
 
 ### Admin Dashboard
@@ -34,22 +53,7 @@ CampusBite provides a seamless experience for students to browse menus, add item
 
 ---
 
-## ✨ Features
 
-### For Students:
-* **Secure Login:** Google OAuth2 authentication restricted to official college email domains (`@sairamtap.edu.in`).
-* **Live Menu:** Browse dynamic food categories and up-to-date item availability.
-* **Shopping Cart:** Add, remove, and adjust quantities of food items before checkout.
-* **Online Payments:** Fully integrated Razorpay gateway for seamless transactions.
-* **Order Tracking:** View order history, payment statuses, and real-time order states.
-
-### For Admins:
-* **Centralized Dashboard:** View total revenue, active orders, and pending tasks at a glance.
-* **Menu Management:** Add new food items, upload high-quality images, and adjust pricing/availability.
-* **Order Processing:** Update order statuses (Pending -> Preparing -> Ready -> Delivered) in real-time.
-* **Role-Based Security:** Secure JWT-based authentication ensuring only authorized staff can access the portal.
-
----
 
 ## 🛠️ Technology Stack
 
@@ -99,5 +103,4 @@ CampusBite provides a seamless experience for students to browse menus, add item
    * Student Portal: `http://localhost:8080/student/login.html`
    * Admin Portal: `http://localhost:8080/admin/login.html`
 
-## Multithreading & Concurrency
-- **Optimistic Locking:** Implemented at the database level to prevent race conditions during high-traffic checkouts. Ensures high-demand food items do not oversell when multiple students attempt to purchase the exact same stock simultaneously.
+
