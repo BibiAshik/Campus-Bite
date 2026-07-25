@@ -2,11 +2,12 @@ package com.campusbite.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
-/**
- * Request to create a Razorpay order for an existing system order.
- */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class PaymentCreateRequestDTO {
     @NotNull(message = "Order ID is required")
     private Long orderId;

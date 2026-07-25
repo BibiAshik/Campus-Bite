@@ -10,6 +10,7 @@ public class CartItemResponseDTO {
     private Long foodItemId;
     private String name;
     private String description;
+    private String category;
     private Double price;
     private String imageUrl;
     private Boolean isVeg;

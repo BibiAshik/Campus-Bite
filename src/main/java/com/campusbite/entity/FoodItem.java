@@ -1,13 +1,15 @@
 package com.campusbite.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 @Entity
 @Table(name = "food_items")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class FoodItem {
@@ -28,6 +30,9 @@ public class FoodItem {
     private String imageUrl;
 
     private Integer quantityAvailable;
+
+    @Version
+    private Long version;
 
     @Column(nullable = false)
     private Boolean isVeg;

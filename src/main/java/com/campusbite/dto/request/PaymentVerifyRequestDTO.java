@@ -2,11 +2,12 @@ package com.campusbite.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
-/**
- * Request to verify a Razorpay payment signature.
- */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class PaymentVerifyRequestDTO {
     @NotBlank(message = "Razorpay order ID is required")
     private String razorpayOrderId;
