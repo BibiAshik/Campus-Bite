@@ -58,6 +58,7 @@ CampusBite provides a seamless experience for students to browse menus, add item
 * **Frontend:** Vanilla HTML, CSS, JavaScript (Mobile-Responsive UI)
 * **Authentication:** Google OAuth2 (Students), JWT (Admins)
 * **Payments:** Razorpay API
+* **Caching:** Redis (Spring Boot Data Redis)
 * **Deployment:** Pre-configured for Railway with persistent Volume support
 
 ---
@@ -68,6 +69,7 @@ CampusBite provides a seamless experience for students to browse menus, add item
 * Java 17+
 * MySQL 8.0+
 * Maven
+* Docker (for Redis caching)
 * A Razorpay Test Account
 * A Google Cloud Console Project (for OAuth2)
 
@@ -82,7 +84,12 @@ CampusBite provides a seamless experience for students to browse menus, add item
 2. **Configure Environment Variables:**
    Create an `application-local.properties` file in `src/main/resources/` with your actual database and API credentials. (Refer to `application.properties` for required keys).
 
-3. **Run the Application:**
+3. **Start Redis & MySQL via Docker (Optional but recommended):**
+   ```bash
+   docker-compose up -d
+   ```
+
+4. **Run the Application:**
    Using Maven Wrapper:
    ```bash
    ./mvnw spring-boot:run
@@ -91,3 +98,6 @@ CampusBite provides a seamless experience for students to browse menus, add item
 4. **Access the platform:**
    * Student Portal: `http://localhost:8080/student/login.html`
    * Admin Portal: `http://localhost:8080/admin/login.html`
+
+## Multithreading & Concurrency
+- **Optimistic Locking:** Implemented at the database level to prevent race conditions during high-traffic checkouts. Ensures high-demand food items do not oversell when multiple students attempt to purchase the exact same stock simultaneously.
